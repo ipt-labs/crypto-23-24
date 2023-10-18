@@ -4,11 +4,11 @@ import random
 
 alp = ['а','б','в','г','д','е','ж','з','и','й','к','л','м','н','о','п','р','с','т','у','ф','х','ц','ч','ш','щ','ъ','ы','ь','э','ю','я']
 
-def read(filename):
+def read_file(filename):
     with open(filename, 'r', encoding = 'utf-8') as file_read:
         return file_read.read()
 
-def write(filename, data):
+def write_file(filename, data):
     with open(filename, 'w', encoding = 'utf-8') as file:
         file.write(data)
 
@@ -121,3 +121,33 @@ def find_a_key(text, length, let):
         n = (alp.index(most_frequent_char) - alp.index(let)) % len(alp)
         key += alp[n]
     return key
+
+def key_2_5(text):                                   
+    print("Початковий індекс відповідності= ", compliance_index(text))
+
+    for i in range(2,6):
+        print("\nДовжина ключа = ",i)
+        key=generate_key(i)
+        enc=encryption(text,key)
+        print("Закодований текс: ",enc)
+        print("Звичайний: ",decryption(enc,key))
+        print("Індекс відповідності: ",compliance_index(enc))
+def key_10_20(text):                                    
+    print("Початковий індекс відповідності= ", compliance_index(text))
+
+    for i in range(10,21):
+        print("\nДовжина ключа = ",i)
+        key=generate_key(i)
+        enc=encryption(text,key)
+        print("Закодований текс: ",enc)
+        print("Звичайний: ",decryption(enc,key))
+        print("Індекс відповідності: ",compliance_index(enc))
+
+
+
+input_file_path = 'H:/криптографія лаби/cleared_for2.txt'
+text = read_file(input_file_path)
+print("\nДля ключів довжиною 2-5\n")
+key_2_5(text)
+print("\nДля ключів довжиною 10-20\n")
+key_10_20(text)
