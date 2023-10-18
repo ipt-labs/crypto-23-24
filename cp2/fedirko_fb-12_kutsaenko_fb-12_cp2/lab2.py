@@ -85,7 +85,7 @@ def index_for_blocks(text, length):
         index = 0
     return index
 
-def calculate_index_for_blocks(text, length):  
+def calculate_index_for_blocks(text):  #calculate_index_for_blocks(text, length)
     def compliance_index(subtext):
         alp_counts = {}
         n = len(subtext)
@@ -103,10 +103,10 @@ def calculate_index_for_blocks(text, length):
 
     for i in range(1, len(alp)):
         total_index = 0
-        for block in get_blocks(text, length):
+        for block in get_blocks(text, i): #for block in get_blocks(text, length)
             total_index += compliance_index(block)
-        average_index = total_index / len(get_blocks(text, length))
-        print('Key len =', i, 'index =', average_index)
+        average_index = total_index / len(get_blocks(text, i)) #average_index = total_index / len(get_blocks(text, length))
+        print('Довжина ключа =', i, 'індекс відповідності =', average_index)
 
 def find_a_key(text, length, let):
     blocks = get_blocks(text, length)
@@ -144,10 +144,23 @@ def key_10_20(text):
         print("Індекс відповідності: ",compliance_index(enc))
 
 
-
+#task1,2
 input_file_path = 'H:/криптографія лаби/cleared_for2.txt'
 text = read_file(input_file_path)
 print("\nДля ключів довжиною 2-5\n")
 key_2_5(text)
 print("\nДля ключів довжиною 10-20\n")
 key_10_20(text)
+
+#task3
+input_file_path = 'H:/криптографія лаби/cleared_encrypted.txt'
+text = read_file(input_file_path)
+print(text)
+calculate_index_for_blocks(text)
+
+key = find_a_key(text, 14, 'о')
+print(key)
+key = "экомаятникфуко"
+print(key)
+dec = decryption(text, key)
+print(dec)
