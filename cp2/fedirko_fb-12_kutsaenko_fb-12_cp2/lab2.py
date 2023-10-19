@@ -69,14 +69,6 @@ def compliance_index(subtext):
     ind *= 1 / (n * (n - 1))
     return ind
 
-def index_for_blocks(text, length):
-    blocks = get_blocks(text, length)
-    index_sum = sum(compliance_index(block) for block in blocks)
-    if blocks:
-        index = index_sum / len(blocks)
-    else:
-        index = 0
-    return index
 
 def calculate_index_for_blocks(text): 
 
