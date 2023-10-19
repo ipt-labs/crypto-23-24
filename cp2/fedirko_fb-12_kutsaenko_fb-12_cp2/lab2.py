@@ -47,13 +47,6 @@ def generate_key(length):
     print("key:", key)
     return key
     
-def get_index(text):
-    freq = get_freq(text)
-    sum = 0
-    for char in freq:
-        sum += freq[char] * (freq[char] - 1)
-    index = (1 / (len(text) * (len(text) - 1))) * sum
-    return index
 
 def get_blocks(text, length):
     blocks = []
@@ -85,27 +78,13 @@ def index_for_blocks(text, length):
         index = 0
     return index
 
-def calculate_index_for_blocks(text):  #calculate_index_for_blocks(text, length)
-    def compliance_index(subtext):
-        alp_counts = {}
-        n = len(subtext)
-
-        for let in subtext:
-            if let in alp_counts:
-                alp_counts[let] += 1
-            else:
-                alp_counts[let] = 1
-        ind = 0
-        for count in alp_counts.values():
-            ind += count * (count - 1)
-        ind *= 1 / (n * (n - 1))
-        return ind
+def calculate_index_for_blocks(text): 
 
     for i in range(1, len(alp)):
         total_index = 0
-        for block in get_blocks(text, i): #for block in get_blocks(text, length)
+        for block in get_blocks(text, i): 
             total_index += compliance_index(block)
-        average_index = total_index / len(get_blocks(text, i)) #average_index = total_index / len(get_blocks(text, length))
+        average_index = total_index / len(get_blocks(text, i)) 
         print('Довжина ключа =', i, 'індекс відповідності =', average_index)
 
 def find_a_key(text, length, let):
