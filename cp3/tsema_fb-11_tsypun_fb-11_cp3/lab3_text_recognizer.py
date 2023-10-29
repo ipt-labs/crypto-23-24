@@ -6,20 +6,13 @@ ALPHA = "абвгдежзийклмнопрстуфхцчшщьыэюя"
 MOST_COMMON_BIGR_IN_LANG = ['ст', 'но', 'то', 'на', 'ен']
 
 
-def get_lang_bigr_entropy() -> float:
+def get_lang_monogr_entropy() -> float:
     result = dict()
-    with open("stats/lab1_bigram_with_interceptions_in_text_without_spaces.csv", "r", encoding="utf-8") as csv_f:
-        for r in csv.reader(csv_f):
-            if r[0] == "*":
-                continue
-            
-            for a in ALPHA:
-                if (r[ALPHA.index(a) + 1]) == '-':
-                    continue
-
-                result.update({r[0] + a: float(r[ALPHA.index(a) + 1])})
+    with open("stats/lab1_monogram_in_text_without_spaces.csv", "r", encoding="utf-8") as csv_f:
+        for r in csv.reader(csv_f):            
+            result.update({r[0]: float(r[1])})
     
-    return compute_entropy(2, result)
+    return compute_entropy(1, result)
 
 
 def freq_count(text: str, n: int, ngr_intercept=False) -> dict[str: float]:
@@ -39,13 +32,13 @@ def freq_count(text: str, n: int, ngr_intercept=False) -> dict[str: float]:
 
 
 def text_analysis(text: str) -> tuple[float, float, float]:
-    lang_bigr_entropy = get_lang_bigr_entropy()
-    freq_dict = freq_count(text, 2, False)
+    lang_monogr_entropy = get_lang_monogr_entropy()
+    freq_dict = freq_count(text, 2)
 
-    most_common = {k: v for k, v in sorted(freq_dict.items(), key=lambda x: x[1], reverse=True)[0:15]}
+    most_common = {k: v for k, v in sorted(freq_dict.items(), key=lambda x: x[1], reverse=True)[0:5]}
 
-    entropy = compute_entropy(2, freq_dict)
+    entropy = compute_entropy(1, freq_count(text, 1))
 
     c_koef = len(set(most_common.keys()).intersection(set(MOST_COMMON_BIGR_IN_LANG)))/len(set(MOST_COMMON_BIGR_IN_LANG))
 
-    return entropy, lang_bigr_entropy, c_koef
+    return entropy, lang_monogr_entropy, c_koef
