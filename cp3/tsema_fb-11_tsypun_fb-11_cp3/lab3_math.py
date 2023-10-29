@@ -1,13 +1,7 @@
-class InverseDoesNotExist(Exception):
-    def __init__(self, expression: str, message: str) -> None:
-        self.expression = expression
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.message} ({self.expression})"
+from typing import Union, Optional
 
 
-def ext_euclid(a: int, b: int) -> tuple:
+def ext_euclid(a: int, b: int) -> tuple[int, int, int]:
     prev_r, r = a, b
     prev_u, u = 1, 0
     prev_v, v = 0, 1
@@ -21,9 +15,28 @@ def ext_euclid(a: int, b: int) -> tuple:
     return prev_r, prev_u, prev_v
 
 
-def get_modulo_inverse(a: int, mod: int):
+def get_modulo_inverse(a: int, mod: int) -> tuple[Optional[int], int]:
     gcd, inverse, _ = ext_euclid(a, mod)
 
     if gcd == 1:
-        return inverse % mod
-    raise InverseDoesNotExist(f"{a}^-1 mod {mod}", "Inverse doesn't exist")
+        return inverse % mod, gcd
+    
+    return None, gcd
+
+
+def linear_comparsion(a: int, b: int, mod: int) -> Union[int, list[int], None]:
+    inverse, gcd = get_modulo_inverse(a, mod)
+    print(inverse, gcd)
+
+    if inverse:
+        return inverse * b % mod
+    
+    if b % gcd == 0:
+        old_gcd = gcd
+        a, b, mod = a // gcd, b // gcd, mod // gcd
+        inverse, gcd = get_modulo_inverse(a, mod)
+        return [i for i in range(inverse * b % mod, inverse * b % mod + old_gcd * mod, mod)]
+    
+    return None
+
+print(linear_comparsion(10, 12, 14))
