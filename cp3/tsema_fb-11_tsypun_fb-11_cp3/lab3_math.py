@@ -1,4 +1,13 @@
 from typing import Union, Optional
+from math import log2
+
+
+def compute_entropy(n: int, freq_dict: dict[str: float]) -> float:
+    entropy = 0
+    for freq in freq_dict.values():
+        entropy -= freq * log2(freq)
+
+    return entropy / n
 
 
 def ext_euclid(a: int, b: int) -> tuple[int, int, int]:
@@ -26,7 +35,6 @@ def get_modulo_inverse(a: int, mod: int) -> tuple[Optional[int], int]:
 
 def linear_comparsion(a: int, b: int, mod: int) -> Union[int, list[int], None]:
     inverse, gcd = get_modulo_inverse(a, mod)
-    print(inverse, gcd)
 
     if inverse:
         return inverse * b % mod
@@ -38,5 +46,3 @@ def linear_comparsion(a: int, b: int, mod: int) -> Union[int, list[int], None]:
         return [i for i in range(inverse * b % mod, inverse * b % mod + old_gcd * mod, mod)]
     
     return None
-
-print(linear_comparsion(10, 12, 14))
