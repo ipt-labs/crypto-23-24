@@ -20,11 +20,31 @@ with open("text_4var.txt", "r", encoding="utf-8") as f:
     text=f.read()
 
 max_key_length = 40
-
+x = []
+y = []
 for r in range(2, max_key_length+1):
     ic = calculate_index_of_coincidence(text, r)
+    x.append(r)
+    y.append(ic)
     print(f"Для r={r}, індекс відповідності: {ic}")
 
+import matplotlib.pyplot as plt
+
+print(x)
+print(y)
+# Побудова графіка
+plt.plot(x, y, marker='o', linestyle='-', color='b', label='Залежність y від x')
+
+# Додавання назв осей та заголовку графіка
+plt.xlabel('Значення x')
+plt.ylabel('Значення y')
+plt.title('Графік залежності y від x')
+
+# Додавання легенди
+plt.legend()
+
+# Показ графіка
+plt.show()
 
 r=13
 blocks = [text[i::r] for i in range(r)]
@@ -69,3 +89,8 @@ print(key)
 print(vigenere_decrypt(text, "громыковедьма")) #громнкавьдума
 with open("decrypted_var4_text.txt", "w", encoding="utf-8") as f:
     f.write(vigenere_decrypt(text, "громыковедьма")) #громнкавьдума
+
+
+
+
+
