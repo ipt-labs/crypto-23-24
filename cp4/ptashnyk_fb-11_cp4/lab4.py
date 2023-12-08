@@ -153,24 +153,59 @@ def main():
     print("Authentication of user A:", result)
 
     #Server check
-    #publicKeyServer = (4760048197000665795791613885719943586008752085234376197045500646937015811001627877789039059408854216981909573295563700874070918605082166848985524500710481, 
-    #                   65537)
-    #privateKeyServer = (1817674995470324583143581932405012560591040628729961681298513804266990519647271377104049990774111353269500135933418868718071722234497762180274312452252745, 
-    #                    57118080886460008612666937053955382494938567652287974903213305464144007566799, 
-    #                    83336977067957613182660920615611173339185099662998084735021632363480102218719)
-    #
-    #publicKeyProgram = (8684944387944291035534816841511807371169203898073859285737713058041207306048724858765575769198690546782598847971950460787003622258516572294037518768298897, 
-    #                    65537)
-    #privateKeyProgram = (1849842664621730603552657404071948961565999621789416692396855769675102808873331642555577728263684717097441031449023026663751280744731191780015611313757693, 
-    #                     102859931232048261086373034384133824342961802102105418558751187833277027117727, 
-    #                     84434670370830528756455114000739072414283248654816777815252463258248570485711)
-    #
-    #encryptedByServer = 1031372753584574620025735401026518734384613066620641376018720860559390532208356335779579099834102000918344081192243693730426379155522514228428908608816857
-    #decryptedByProgram = Decrypt(encryptedByServer, privateKeyProgram)
-    #print("Decryption by program:", decryptedByProgram)
-    #message = 999999999
-    #encryptedByProgram = Encrypt(message, publicKeyServer)
-    #print("Encryption by program:", encryptedByProgram)
+
+    # publicKeyServer = (int("ABB56B149D2B8AC5BA1C9764C4431C7A6CAFC0D6FFE1145B4B4C30905B17F3B9", 16), 
+    #                    int("10001", 16))
+
+    # pProgram = GenerateRandomPrime(length = 128)
+    # qProgram = GenerateRandomPrime(length = 128)
+
+    # publicKeyProgram, privateKeyProgram = GenerateKeyPair(pProgram, qProgram)
+
+    # print(publicKeyProgram)
+    # print(privateKeyProgram)
+
+    # publicKeyProgram = (41887016183231955725709937040856737739607424282165092723873588768948795089469,
+    #                     65537)
+    
+    # privateKeyProgram = (25178738766474249596630040583556634927380026189639794459545454434999512306773,
+    #                      209439695060123648592801721058537048411,
+    #                      199995593820968326575863902654491115079)
+
+    
+    # print("Public key of program:", hex(publicKeyProgram[0])[2:].upper())
+
+    # encryptedByServer = int("345309F52AD379F345916874A9071CB08EA2480421BC2E61E44F40FA25962FB3", 16)
+    # decryptedByProgram = Decrypt(encryptedByServer, privateKeyProgram)
+    # print("Decrypted by program:", hex(decryptedByProgram)[2:].upper())
+
+    # message = 999999999
+    # print("hex of", message, ":", hex(message)[2:].upper())
+    # encryptedByProgram = Encrypt(message, publicKeyServer)
+    # print("Encrypted by program:", hex(encryptedByProgram)[2:].upper())
+
+    # message = 55555
+    # print("hex of", message, ":", hex(message)[2:].upper())
+
+    # signByServer = int("6BFD032DDE2250D28AAC82B841FBE0474A75DCA42A057FBB0B008EF6E9C38734", 16)
+    # verifyByProgram = Verify((message, signByServer), publicKeyServer)
+    # print("Result of verifying by program:", verifyByProgram)
+
+    # message = 22
+    # print("hex of", message, ":", hex(message)[2:].upper())
+    # signByProgram = Sign(message, privateKeyProgram)
+    # print("Sign by program:", hex(signByProgram[1])[2:].upper())
+
+    # kServer = int("2FC51C5D61B20DAF21D639DDDF0F9381295774B4DDF9ED5DDD1D5D5E5AD49F0F", 16)
+    # sServer = int("37CEF8F0892B53D9EDB79C7B7810134B7415D8140EAA323722CF3B25146B3156", 16)
+    # receiveResult = ReceiveKey(privateKeyProgram, kServer, sServer, publicKeyServer)
+    # print("Result of receiving key:", receiveResult)
+
+    # kProgram = 565655
+    # print("hex of", kProgram, ":", hex(kProgram)[2:].upper())
+    # sendResult = SendKey(publicKeyProgram, publicKeyServer, privateKeyProgram, kProgram)
+    # print("kProgram:", hex(sendResult[0])[2:].upper())
+    # print("sProgram:", hex(sendResult[1])[2:].upper())
 
 if __name__ == "__main__":
     main()
