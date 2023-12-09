@@ -71,7 +71,7 @@ def rand_primes(N=256):
     q1 = rand_prime()
 
     while p * q <= p1 * q1:
-        # Якщо pq <= p1q1, генеруємо нові пари чисел
+        # Якщо pq ≤ p1q1, генеруємо нові пари чисел
         p = rand_prime()
         q = rand_prime()
         p1 = rand_prime()
@@ -95,5 +95,49 @@ def key_pair(p, q):
 
     return public_key, private_key
 
+def encrypt(message, public_key):
+    e, n = public_key
+    if len(message) >= n:
+        raise ValueError("Message size exceeds the modulus (n). Choose a shorter message.")
+    ciphertext = [horner(ord(char), e, n) for char in message]
+    return ciphertext
+
+def decrypt(ciphertext, private_key):
+    d, p, q = private_key
+    decrypted = [chr(horner(char, d, p * q)) for char in ciphertext]
+    return ''.join(decrypted)
+
+def sign(message, private_key):
+    d, p, q = private_key
+    signature = [horner(ord(char), d, p * q) for char in message]
+    return signature
+
+def verify(signature, message, public_key):
+    e, n = public_key
+    verified = [chr(horner(char, e, n)) for char in signature]
+    return ''.join(verified) == message
+
+# ex 5
+def send_key(private_key, public_key, message):
+    encrypted_message = encrypt(public_key, message)
+    signature = sign(private_key, encrypted_message)
+
+    print('Encrypted: ', encrypted_message)
+    print('Signature: ', signature)
+
+    return encrypted_message, signature
+
+
+def receive_key(private_key, public_key, encrypted_message, signature):
+    if verify(public_key, encrypted_message, signature):
+        print('Message is verified')
+    else:
+        print('Message is not verified')
+        exit()
+
+    decrypted_message = decrypt(private_key, encrypted_message)
+    print('Decrypted: ', decrypted_message)
+
+    return decrypted_message
 
 
