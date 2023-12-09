@@ -46,7 +46,7 @@ def Miller_Rabin(number):
     while d % 2 == 0:
         s += 1
         d //= 2
-    for k in range(50):
+    for k in range(40):
         x = randrange(2, number - 1)
         gcd = GCD(x, number)[0]
         if gcd > 1:
@@ -97,30 +97,32 @@ def key_pair(p, q):
 
 def encrypt(message, public_key):
     e, n = public_key
-    if len(message) >= n:
+    if message >= n:
         raise ValueError("Message size exceeds the modulus (n). Choose a shorter message.")
-    ciphertext = [horner(ord(char), e, n) for char in message]
+    ciphertext = horner(message, e, n)#[horner(ord(char), e, n) for char in message]
     return ciphertext
 
 def decrypt(ciphertext, private_key):
     d, p, q = private_key
-    decrypted = [chr(horner(char, d, p * q)) for char in ciphertext]
-    return ''.join(decrypted)
+    decrypted = horner(ciphertext, d, p * q)#[chr(horner(char, d, p * q)) for char in ciphertext]
+    return decrypted#''.join(decrypted)
 
 def sign(message, private_key):
     d, p, q = private_key
-    signature = [horner(ord(char), d, p * q) for char in message]
+    #signature = [horner(ord(char), d, p * q) for char in message]
+    #print(message)
+    signature = horner(message, d, p * q)
     return signature
 
 def verify(signature, message, public_key):
     e, n = public_key
-    verified = [chr(horner(char, e, n)) for char in signature]
-    return ''.join(verified) == message
+    verified = horner(signature, e, n)#[chr(horner(char, e, n)) for char in signature]
+    return verified==message#''.join(verified) == message
 
 # ex 5
 def send_key(private_key, public_key, message):
-    encrypted_message = encrypt(public_key, message)
-    signature = sign(private_key, encrypted_message)
+    encrypted_message = encrypt(message, public_key)
+    signature = sign(encrypted_message, private_key)
 
     print('Encrypted: ', encrypted_message)
     print('Signature: ', signature)
@@ -129,15 +131,25 @@ def send_key(private_key, public_key, message):
 
 
 def receive_key(private_key, public_key, encrypted_message, signature):
-    if verify(public_key, encrypted_message, signature):
+    if verify(signature, encrypted_message,  public_key):
         print('Message is verified')
     else:
         print('Message is not verified')
         exit()
 
-    decrypted_message = decrypt(private_key, encrypted_message)
+    decrypted_message = decrypt(encrypted_message, private_key)
     print('Decrypted: ', decrypted_message)
 
     return decrypted_message
 
 
+p, q, p1, q1 = rand_primes()
+print("For A:", "\np=", p, "\nq=", q,"\nFor B:", "\np1=", p1, "\nq1=", q1)
+public_key_A, private_key_A = key_pair(p, q)
+print("\nPublic key A:", "\ne", public_key_A[0],"\nn", public_key_A[1], "\nPrivate key A:", "\nd", private_key_A[0],"\np", private_key_A[1], "\nq", private_key_A[2])
+public_key_B, private_key_B = key_pair(p1, q1)
+print("\nPublic key B:", "\ne", public_key_B[0],"\nn", public_key_B[1], "\nPrivate key A:", "\nd", private_key_B[0],"\np", private_key_B[1], "\nq", private_key_B[2])
+message = 1234567890
+print(message)
+encrypted_message, signature = send_key(private_key_A, public_key_B, message)
+receive_key(private_key_B, public_key_A, encrypted_message, signature)
