@@ -121,10 +121,12 @@ def verify(signature, message, public_key):
 
 # ex 5
 def send_key(private_key, public_key, message):
+    message = encode(message)
     encrypted_message = encrypt(message, public_key)
     signature = sign(encrypted_message, private_key)
 
     print('Encrypted: ', encrypted_message)
+    print('Encrypted hex: ', hex(encrypted_message))
     print('Signature: ', signature)
 
     return encrypted_message, signature
@@ -138,18 +140,30 @@ def receive_key(private_key, public_key, encrypted_message, signature):
         exit()
 
     decrypted_message = decrypt(encrypted_message, private_key)
+    decrypted_message = decode(decrypted_message)
     print('Decrypted: ', decrypted_message)
 
     return decrypted_message
 
+def encode(text): # перевод симфолів ASCII у хекс
+    text = text.encode('utf-8')
+    return int(text.hex(), 16)
+
+def decode(text): # перевод цифр у букв
+    return bytes.fromhex(hex(text)[2:]).decode('ASCII')
+
+
 
 p, q, p1, q1 = rand_primes()
 print("For A:", "\np=", p, "\nq=", q,"\nFor B:", "\np1=", p1, "\nq1=", q1)
+print("For A:", "\nhex_p=", hex(p), "\nhex_q=", hex(q),"\nFor B:", "\nhex_p1=", hex(p1), "\nhex_q1=", hex(q1))
 public_key_A, private_key_A = key_pair(p, q)
 print("\nPublic key A:", "\ne", public_key_A[0],"\nn", public_key_A[1], "\nPrivate key A:", "\nd", private_key_A[0],"\np", private_key_A[1], "\nq", private_key_A[2])
+print("\nPublic key A:", "\nhex_e", hex(public_key_A[0]),"\nhex_n", hex(public_key_A[1]), "\nPrivate key A:", "\nhex_d", hex(private_key_A[0]),"\nhex_p", hex(private_key_A[1]), "\nhex_q", hex(private_key_A[2]))
 public_key_B, private_key_B = key_pair(p1, q1)
-print("\nPublic key B:", "\ne", public_key_B[0],"\nn", public_key_B[1], "\nPrivate key A:", "\nd", private_key_B[0],"\np", private_key_B[1], "\nq", private_key_B[2])
-message = 1234567890
+print("\nPublic key B:", "\ne", public_key_B[0],"\nn", public_key_B[1], "\nPrivate key B:", "\nd", private_key_B[0],"\np", private_key_B[1], "\nq", private_key_B[2])
+print("\nPublic key B:", "\nhex_e", hex(public_key_B[0]),"\nhex_n", hex(public_key_B[1]), "\nPrivate key B:", "\nhex_d", hex(private_key_B[0]),"\nhex_p", hex(private_key_B[1]), "\nhex_q", hex(private_key_B[2]))
+message = "Hello" #1234567890
 print(message)
 encrypted_message, signature = send_key(private_key_A, public_key_B, message)
 receive_key(private_key_B, public_key_A, encrypted_message, signature)
