@@ -1,0 +1,142 @@
+import codecs
+import collections
+import math
+import re
+
+
+def read_text(filename):
+    with codecs.open(filename, 'r', encoding='utf-8') as file:
+        return file.read()
+
+
+def preprocess_text(text):
+    text = text.lower()
+    # text = re.sub(r'[.,(){}\[\]\'"!?*-<>—:;«»…°prsogt„“mycbd–qwertyuiopasdfghjklzxcvbnm\s+]', ' ', text)
+    text = re.sub(r'[^а-яА-Я\s\n]', '', text)
+    return text
+
+
+def letter_frequency(text):
+    freq_map = collections.Counter(text)
+    return freq_map
+
+
+def bigram_frequency(text):
+    freq_map = collections.Counter(text[i:i + 2] for i in range(0, len(text) - 1, 2))
+    return freq_map
+
+
+def bigram_frequency_nocross(text):
+    freq_map = collections.Counter()
+    for i in range(len(text) - 1):
+        bigram = text[i:i + 2]
+        freq_map[bigram] += 1
+    return freq_map
+
+
+def entropy(ensemble):
+    total = sum(ensemble.values())
+    h = 0
+    for count in ensemble.values():
+        probability = count / total
+        h -= probability * math.log2(probability)
+    return h
+
+
+def main(filename):
+    text = read_text(filename)
+    preprocessed_text = preprocess_text(text)
+
+    with_spaces = re.sub(r'[.,(){}\[\]\'"!?*-<>—:;\d`/\\enxiva\s]+', ' ', preprocessed_text)
+    without_spaces = re.sub(r'\s', '', preprocessed_text)
+
+    with open("without_spaces.txt", 'w', encoding='utf-8') as nospaces:
+        nospaces.write(without_spaces)
+
+    with open("with_spaces.txt", 'w', encoding='utf-8') as spaces:
+        spaces.write(with_spaces)
+
+    letters = letter_frequency(without_spaces)
+    letters_spaces = letter_frequency(with_spaces)
+    bigrams_cross = bigram_frequency(without_spaces)
+    bigrams_nocross = bigram_frequency_nocross(without_spaces)
+    bigrams_cross_spaces = bigram_frequency(with_spaces)
+    bigrams_nocross_spaces = bigram_frequency_nocross(with_spaces)
+
+    h11 = entropy(letters)
+    h12 = entropy(letters_spaces)
+    h21 = entropy(bigrams_cross) / 2
+    h22 = entropy(bigrams_nocross) / 2
+    h23 = entropy(bigrams_cross_spaces) / 2
+    h24 = entropy(bigrams_nocross_spaces) / 2
+
+
+    with open("programs_out.txt", 'w', encoding='utf-8') as out:
+        out.write(f"Ентропія монограм без пробілів: {h11}\n")
+        out.write(f"Надлишковість для тексту без пробілів: {1 - h11 / math.log2(31)}\n")
+        out.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
+        out.write(f"Ентропія монограм з пробілами: {h12}\n")
+        out.write(f"Надлишковість для тексту з пробілами: {1 - h12 / math.log2(32)}\n")
+        out.write("=======================================================================================\n")
+        out.write(f"Ентропія біграм без пробілів та з перетинами: {h21}\n")
+        out.write(f"Надлишковість для джерела біграм без пробілів та з перетинами: {1 - h21 / math.log2(31)}\n")
+        out.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
+        out.write(f"Ентропія біграм без пробілів та без перетинів: {h22}\n")
+        out.write(f"Надлишковість для джерела біграм без пробілів та без перетинів: {1 - h22 / math.log2(31)}\n")
+        out.write("---------------------------------------------------------------------------------------\n")
+        out.write(f"Ентропія біграм з пробілами та перетинами: {h23}\n")
+        out.write(f"Надлишковість для джерела біграм з пробілами та перетинами: {1 - h23 / math.log2(32)}\n")
+        out.write("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
+        out.write(f"Ентропія біграм з пробілами та без перетинів: {h24}\n")
+        out.write(f"Надлишковість для джерела біграм з пробілами та без перетинів: {1 - h24 / math.log2(32)}\n")
+
+        sum_letters_nospaces = sum(letters.values())
+        sum_letters_spaces = sum(letters_spaces.values())
+        sum_bigrams_nospaces_cross = sum(bigrams_cross.values())
+        sum_bigrams_nospaces_nocross = sum(bigrams_nocross.values())
+        sum_bigrams_spaces_cross = sum(bigrams_cross_spaces.values())
+        sum_bigrams_spaces_nocross = sum(bigrams_nocross_spaces.values())
+
+        table11 = open("table_letters_nospaces.csv", 'w', encoding='utf-8')
+        table12 = open("table_letters_spaces.csv", 'w', encoding='utf-8')
+        table21 = open("table_bigrams_nospaces_cross.csv", 'w', encoding='utf-8')
+        table22 = open("table_bigrams_nospaces_nocross.csv", 'w', encoding='utf-8')
+        table23 = open("table_bigrams_spaces_cross.csv", 'w', encoding='utf-8')
+        table24 = open("table_bigrams_spaces_nocross.csv", 'w', encoding='utf-8')
+
+        table11.write("Біграмма;Частота;Вірогідність;\n")
+        table12.write("Біграмма;Частота;Вірогідність;\n")
+        table21.write("Біграмма;Частота;Вірогідність;\n")
+        table22.write("Біграмма;Частота;Вірогідність;\n")
+        table23.write("Біграмма;Частота;Вірогідність;\n")
+        table24.write("Біграмма;Частота;Вірогідність;\n")
+
+        for bigram, count in letters.items():
+            table11.write(f"{bigram};{count};{count / sum_letters_nospaces};\n")
+
+        for bigram, count in letters_spaces.items():
+            table12.write(f"{bigram};{count};{count / sum_letters_spaces};\n")
+
+        for bigram, count in bigrams_cross.items():
+            table21.write(f"{bigram};{count};{count / sum_bigrams_nospaces_cross};\n")
+
+        for bigram, count in bigrams_nocross.items():
+            table22.write(f"{bigram};{count};{count / sum_bigrams_nospaces_nocross};\n")
+
+        for bigram, count in bigrams_cross_spaces.items():
+            table23.write(f"{bigram};{count};{count / sum_bigrams_spaces_cross};\n")
+
+        for bigram, count in bigrams_nocross_spaces.items():
+            table24.write(f"{bigram};{count};{count / sum_bigrams_spaces_nocross};\n")
+
+        table11.close()
+        table12.close()
+        table21.close()
+        table22.close()
+        table23.close()
+        table24.close()
+
+
+if __name__ == "__main__":
+    main(filename="lab_1.txt")
+
