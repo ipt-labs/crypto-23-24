@@ -83,11 +83,16 @@ def DecryptText(text, keys, alphabet):
         decryptedText = ""
     return result
 
-def CheckDecryption(decryptedTexts, alphabet):
+def CheckDecryption(decryptedTexts):
+    impossibleBigrams = ["аы","аь","оы","оь","уы","уь","ьы","ыь","эы","эь","йь","йы","еы","еь"]
+    success = []
     for text in decryptedTexts:
-        letterFrequency = LetterFrequency(text[1], alphabet)
-        if abs(letterFrequency.get("ф") - 0.001) < 0.01 and abs(letterFrequency.get("щ") - 0.003) < 0.01 and abs(letterFrequency.get("ь") - 0.02) < 0.01:
-            return text
+        for bigram in impossibleBigrams:
+            if bigram in text[1]:
+                break
+        else:
+            success.append(text)
+    return success
 
 def main():
     alphabet = "абвгдежзийклмнопрстуфхцчшщьыэюя"
@@ -99,10 +104,9 @@ def main():
     bigramPairs = BigramPairs(mostCommonBigrams, mostEncryptedBigrams)
     keys = FindKeys(bigramPairs, alphabet)
     decryptedTexts = DecryptText(text, keys, alphabet)
-    decryptedText = CheckDecryption(decryptedTexts, alphabet)
-    print(decryptedText[0])
+    verifiedTexts = CheckDecryption(decryptedTexts)
     with open(file = "12_decrypted.txt", encoding = "utf-8", mode = "w") as file:
-        file.write(decryptedText[1])
+        file.write(verifiedTexts[0][1])
 
 if __name__ == "__main__":
     main()
