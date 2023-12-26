@@ -1,4 +1,5 @@
 from csv import reader,writer
+from math import inf
 
 def ReadFile(filename):
     with open(filename, encoding = "utf-8", mode = "r") as file:
@@ -96,11 +97,41 @@ def BlocksOfCeasar(encryptedText,key):
         block = ''
     return blocksOfCeasar
 
+def CeasarDecrypt(text, key, alphabet):
+    decrypted = ''
+    for char in text:
+        decrypted += alphabet[(alphabet.find(char) - key) % len(alphabet)]
+    return decrypted
+
+def CompareCeasarKeys(text, keys, alphabet):
+    letterFrequency = {'а':0.07966000154221213, 'б':0.017389034871788788, 'в':0.0462616184923097, 'г':0.016890781723599996, 'д':0.032017510039207775, 'е':0.08708990503532259 + 7.711060626731281e-05, 'ж':0.011408810776503806, 'з':0.015397208596053123, 'и':0.06484764723677108,
+                       'й':0.010013701961575193, 'к':0.03302706582279983, 'л':0.04596148028637693, 'м':0.03143977365071268, 'н':0.06508609695769, 'о':0.114725160004508, 'п':0.027441885295007386, 'р':0.04183191074150745, 'с':0.05293109277592251, 'т':0.06475155555819181,
+                       'у':0.02965199390233052, 'ф':0.0012444465534524791, 'х':0.008508265663833347, 'ц':0.00277242287456477, 'ч':0.018103197717526054, 'ш':0.00823066748127102, 'щ':0.00299070520615224, 'ъ':0.00024200867197741253, 'ы':0.016513532911399915,
+                       'ь':0.022984892252756704, 'э':0.0035269204989649386, 'ю':0.005617211087318864, 'я':0.02136438320412364}
+    lowestDifference = inf
+    differenceSum = 0
+    encryptionKey = 0
+    for key in keys:
+        decryptedText = CeasarDecrypt(text, key, alphabet)
+        entries = CountLettersEntries(decryptedText, alphabet)
+        for char in alphabet:
+            differenceSum += abs(letterFrequency.get(char) - (entries.get(char) / len(decryptedText)))
+        if differenceSum < lowestDifference:
+            lowestDifference = differenceSum
+            encryptionKey = key
+        #print("key {}({}) - DifferenceSum {}".format(key, alphabet[key], differenceSum))
+    #print()
+    return encryptionKey
+
 def FindCeasarKey(text,alphabet):
+    possibleCeasarKeys = []
     entries = CountLettersEntries(text,alphabet)
     mostFrequentLetter = max(entries, key = entries.get)
-    key = (alphabet.find(mostFrequentLetter) - alphabet.find('о')) % len(alphabet)
-    return key
+    possibleCeasarKeys.append((alphabet.find(mostFrequentLetter) - alphabet.find('о')) % len(alphabet))
+    possibleCeasarKeys.append((alphabet.find(mostFrequentLetter) - alphabet.find('е')) % len(alphabet))
+    possibleCeasarKeys.append((alphabet.find(mostFrequentLetter) - alphabet.find('а')) % len(alphabet))
+    encryptionKey = CompareCeasarKeys(text, possibleCeasarKeys, alphabet)
+    return encryptionKey
 
 def VigenereDecrypt(text,key,alphabet):
     keyCharIndex = 0
@@ -144,6 +175,7 @@ if __name__ == "__main__":
     for block in blocksOfCeasar:
         key = FindCeasarKey(block,alphabet)
         vigenereKey += alphabet[key]
+    #print(vigenereKey)
     vigenereKey = 'чугунныенебеса' #чкгунныенебеиа
     decryptedText = VigenereDecrypt(textToDecrypt,vigenereKey,alphabet)
     with open("DecryptedText.txt","w") as file:
