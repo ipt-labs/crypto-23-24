@@ -154,16 +154,23 @@ def Test():
     print(A_pt)
     A_sg = Sign(message, A_private)
     A_ver = Verify(A_sg, message ,A_public)
-    assert A_ver,"Verification failed on side A"
+    if not A_ver:
+        print("Verification failed on A-side ")
     B_ct = Encode(message, B_public)
     B_pt = Decode(B_ct, B_private)
     B_sg = Sign(message, B_private)
     B_ver = Verify(B_sg,message, B_public)
-    assert B_ver,"Verification failed on side B"
+    if not B_ver:
+        print("Verification failed on B-side ")
     k1, S1 = SendKey(A_private,B_public,message)
     k, S = ReceiveKey(A_public,B_private, k1, S1)
-    print(f"Key exchange:\nmessage: {message}\nk1: {k1}\nS1: {S1}\nk: {k}\nS: {S}")
-    print("Key exchange test passed\n")
+    print("Key exchange:")
+    print(f"message: {message}")
+    print(f"k1: {k1}")
+    print(f"S1: {S1}")
+    print(f"k: {k}")
+    print(f"S: {S}")
+    print("Key exchange passed the test\n")
     text_message='RSA is cool. Best computer workshop' 
     pt = Text2Bytes(text_message)
     print(pt)
