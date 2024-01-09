@@ -1,4 +1,5 @@
 import re
+import matplotlib.pyplot as plt
 from collections import Counter
 def repeat_items(l, c):
     return l * (c // len(l)) + l[:(c % len(l))]
@@ -127,12 +128,15 @@ for i in key_list:
 
 
 freq_dict = calculate_letter_frequencies(text)
-print(freq_dict)
-print(freq_dict.values())
+#print(freq_dict)
+#print(freq_dict.values())
 c = key_length(encrypted_text)
-print(c)
 for i_i in c:
     print(f"Індекс відповідності для ключа довжини :",i_i, c[i_i])
+plt.bar(c.keys(), c.values())
+plt.xlabel('length of key')
+plt.ylabel('IC')
+plt.show()
 b = find_complience_index(encrypted_text)
 print('Ключ:', find_vigenere_key(encrypted_text, 13))
 got_key = 'громыковедьма'

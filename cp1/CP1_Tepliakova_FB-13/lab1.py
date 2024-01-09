@@ -78,7 +78,7 @@ def bigram_entropy_without_spaces(text):
     entropy = 0
     for count in bigram_frequencies.values():
         probability = count / total_bigrams
-        entropy += -probability * math.log2(probability)
+        entropy += -probability * math.log2(probability)/2 #підправила
     
     return entropy
 
@@ -98,8 +98,8 @@ bigram_freq_non_intersect = bigram_frequency(text, step=2)  # біграми н�
 
 entropy_char = calculate_H(char_freq)
 #entropy_bigram = calculate_H(bigram_freq)
-entropy_bigram_intersect = calculate_H(bigram_freq_intersect)
-entropy_bigram_non_intersect = calculate_H(bigram_freq_non_intersect)
+entropy_bigram_intersect = calculate_H(bigram_freq_intersect)/2 #підправила
+entropy_bigram_non_intersect = calculate_H(bigram_freq_non_intersect)/2 #підправила
 
 R_char = calculate_R(entropy_char, alphabet_size=len(char_freq))
 #R_bigram = calculate_R(entropy_bigram, alphabet_size=len(bigram_freq))

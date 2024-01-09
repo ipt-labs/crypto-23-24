@@ -64,7 +64,6 @@ def count_bigram(text):
         bigram_pair[key] /= bigram_count
 
     sorted_bigrams = sorted(bigram_pair.items(), key=lambda x: x[1], reverse=True)
-
     return dict(sorted_bigrams)
 
 
@@ -73,30 +72,29 @@ def bigram_number(a, b):
     number = (alpha.index(a))*m + alpha.index(b)
     return number
 
+
 # This function transforms number back to bigram
 def number_to_bigram(X):
     b = X % m
     a = X // m
     return alpha[a] + alpha[b]
 
+
 # This function checks if text is meaningful
 def check_text(text):
 
-    bigrams = ["гь", "йж", "жф", "жщ", "йь"]      #"зп", "зщ", "йь", "оы", "уы", "уь", "шщ", "ьы"
-    for b in bigrams:
-        for i in range(0, len(text) - 1, 2):
-            bigram = text[i:i + 2]
-            if bigram == b:
-                return False
+    bigrams = ["гь", "йь", "уы", "ьы", "йь"]      #"зп", "зщ", "йь", "оы", "уы", "уь", "шщ", "ьы"
+    for bigram in bigrams:
+        if bigram in text:
+            return False
     return True
 
+file_input = input("Input file: ")
+file_output = input("Output file: ")
+with open(file_input, "r") as file_input:
 
-
-with open("/home/kali/Desktop/cryptolab3/07.txt", "r") as file_input:
-
-    for line in file_input:
-        text = line
-
+    text = file_input.read()
+print(text)
 bigrams = count_bigram(text)
 list_bigrams = [key for key, value in bigrams.items()][0:5]
 print("Most frequent bigrams in ciphertext are: ", list_bigrams)
@@ -109,31 +107,28 @@ for bigram in list_bigrams:
 
 bigrams_lang = [bigram_number('с', 'т'), bigram_number('н', 'о'), bigram_number('т', 'о'), bigram_number('н', 'а'), bigram_number('е', 'н')]    # Most frequent bigrams in language
 
-# for key, value in bigrams.items():
-#     print(f"{key}:{value}")
-
 # Finding keys 
 keys = []
 for i in range(0, 5):
     for j in range(0, 5):
         for k in range(0, 5):
             for l in range(0, 5):
+                if i != k and j != l:
+                    X1_X2 = (bigrams_lang[i] - bigrams_lang[k]) % m**2
+                    Y1_Y2 = (bigrams_text[j] - bigrams_text[l]) % m**2
+                    inverse = congruence(X1_X2, Y1_Y2, m**2)
+                    if inverse is not None:
+                        for a in inverse:
+                            b = (bigrams_text[j] - a*bigrams_lang[i]) % m**2
+                            pair = [a, b]
+                            keys.append(pair)
 
-                X1_X2 = (bigrams_lang[i] - bigrams_lang[k]) % m**2
-                Y1_Y2 = (bigrams_text[j] - bigrams_text[l]) % m**2
-                inverse = inverse_elem(X1_X2, m**2)
-                if inverse is not None:
-                    a = (inverse * Y1_Y2) % m**2
-                    b = (bigrams_text[j] - a*bigrams_lang[i]) % m**2
-                    pair = [a, b]
-                    keys.append(pair)
+unique_keys = list(set(map(tuple, keys)))
+print("Number of candidates:", len(unique_keys))
+print("Result in dec_result.txt file")
 
+with open(file_output, "w") as file_output:
 
-unique_set = {tuple(lst) for lst in keys}
-unique_keys = [list(item) for item in unique_set]
-
-with open("/home/kali/Desktop/cryptolab3/dec_result.txt", "w") as file_output:
-    
     for pair in unique_keys:
         decrypted_text = ""
         a = pair[0]
@@ -141,7 +136,6 @@ with open("/home/kali/Desktop/cryptolab3/dec_result.txt", "w") as file_output:
         for i in range(0, len(text) - 1, 2):
             bigram = text[i:i + 2]
             if inverse_elem(a, m**2) is not None:
-                #X = (inverse * (bigram_number(bigram[0], bigram[1]) - b)) % m**2
                 X = congruence(a, (bigram_number(bigram[0], bigram[1]) - b) % m**2, m**2)
                 if X[0] is None:
                     continue
@@ -149,9 +143,7 @@ with open("/home/kali/Desktop/cryptolab3/dec_result.txt", "w") as file_output:
                
 
         if check_text(decrypted_text) == True:
-            file_output.write(f"Key ({a}, {b}): ")
-            file_output.write(decrypted_text)
-            file_output.write("\n")
+            file_output.write(f"Key ({a}, {b}): {decrypted_text}\n")
 
 
 # 5 most frequent bigrams in ciphertext

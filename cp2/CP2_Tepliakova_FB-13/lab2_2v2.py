@@ -20,7 +20,7 @@ def calculate_index_of_coincidence(plain_text):
 
 
 def find_key_length(text):
-    max_index = 0
+    max_index = 0.053
     best_l = 2 #з попереднього завдання 2 - найкраща довжина
     for i in range (2, 30):
         block = ''
